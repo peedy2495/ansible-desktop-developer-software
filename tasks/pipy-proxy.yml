@@ -1,0 +1,14 @@
+- name: pipy-proxy - set hosts entry
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    line: "{{ pipy_proxy_ip }} {{ pipy_proxy }}"
+    state: present
+
+- name: pipy-proxy - write config
+  ansible.builtin.template:
+    src: pip.conf.j2
+    dest: /etc/pip.conf
+    owner: root
+    group: root
+    mode: 0644
+    force: yes

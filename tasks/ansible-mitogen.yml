@@ -1,0 +1,21 @@
+- name: mitogen {{ mitogen_version }} - inbstall
+  ansible.builtin.pip:
+    name: mitogen=={{ mitogen_version }}
+  register: mitogen
+
+- name: mitogen {{ mitogen_version }} - correct folder permissions
+  command: 'find /usr/local/lib/python3.10/dist-packages/{{ item }} -type d -exec chmod 755 {} \;'
+  with_items:
+    - ansible_mitogen
+    - mitogen
+    - mitogen-{{ mitogen_version }}.dist-info
+  when: mitogen is changed
+
+- name: mitogen {{ mitogen_version }} - correct read permissions
+  shell: 'chmod -R go+r /usr/local/lib/python3.10/dist-packages/{{ item }}'
+  with_items:
+    - ansible_mitogen
+    - mitogen
+    - mitogen-{{ mitogen_version }}.dist-info
+  when: mitogen is changed
+  
