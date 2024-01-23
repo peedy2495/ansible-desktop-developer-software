@@ -65,7 +65,6 @@
         state: latest
         pkg:
           - kubectl
-          - kubeadm
 
     - name: kubernetes - cleanup
       apt:

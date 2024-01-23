@@ -34,9 +34,32 @@
         install_recommends: true
         state: latest
         pkg:
-          - golang-1.21
+          - "golang-{{ golang_version }}"
+      register: golang_install
+
+    - name: ppa-golang - remove existent exec symlink 
+      file:
+        path: /usr/local/sbin/go
+        state: absent
+      when: golang_install is changed
+      ignore_errors: true
+
+    - name: ppa-golang - create new exec symlink
+      file:
+        src: "/usr/lib/go-{{ golang_version }}/bin/go"
+        dest: /usr/local/sbin/go
+        state: link
+      when: golang_install is changed
 
     - name: ppa-golang - cleanup
       apt:
         autoremove: true
         autoclean: true
+
+    - name: ppa-golang - install language server fron native repos
+      apt:
+        update_cache: false
+        install_recommends: true
+        state: latest
+        pkg:
+          - gopls

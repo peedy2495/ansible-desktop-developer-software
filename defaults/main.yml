@@ -8,3 +8,5 @@ pipy_proxy_port: 8081
 pipy_proxy_proto: http
 pipy_proxy_ip: 192.168.123.180
 mitogen_version: 0.3.4
+
+golang_version: "1.21"
