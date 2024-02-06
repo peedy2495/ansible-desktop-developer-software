@@ -211,3 +211,31 @@
       apt:
         autoremove: true
         autoclean: true
+
+    - name: docker-ce - gathering current environment
+      stat:
+        path: /home/.docker
+      register: docker_home
+
+    - name: docker-ce - stop service
+      systemd:
+        name: docker.service
+        state: stopped
+      when: not docker_home.stat.exists
+
+    - name: docker-ce - move docker-data
+      shell: mv /var/lib/docker/ /home/.docker/
+      when: not docker_home.stat.exists
+
+    - name: docker-ce - create symlinks
+      file:
+        src: /home/.docker/
+        dest: /var/lib/docker
+        state: link
+      when: not docker_home.stat.exists
+
+    - name: docker-ce - start service
+      systemd:
+        name: docker.service
+        state: started
+      when: not docker_home.stat.exists
