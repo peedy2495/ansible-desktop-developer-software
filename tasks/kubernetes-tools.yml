@@ -79,7 +79,7 @@
       Content-Type: "application/json"
   register: k9s_latest
 
-- name: debugging
+- name: debugging json
   debug:
     msg: "{{ k9s_latest }}"
 
