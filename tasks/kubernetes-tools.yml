@@ -79,6 +79,10 @@
       Content-Type: "application/json"
   register: k9s_latest
 
+- name: debugging
+  debug:
+    msg: "{{ k9s_latest }}"
+
 - name: kubernetes - install k9s - pull package
   loop: "{{ k9s_latest.json.assets }}"
   loop_control:
