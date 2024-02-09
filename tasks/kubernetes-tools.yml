@@ -72,12 +72,13 @@
         autoclean: true
 
 - name: kubernetes - install k9s - determine latest tag @GitHub
+  #shell: 'curl -H "Accept: application/vnd.github.v3+json" http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest'
   uri:
     url: http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest
     return_content: true
     headers:
-      Content-Type: "application/json"
-    body_format: "json"
+      Content-Type: "Accept: application/vnd.github.v3+json"
+    body_format: json
   register: k9s_latest
 
 - name: debugging json
