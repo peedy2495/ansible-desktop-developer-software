@@ -91,12 +91,17 @@
     # deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
   # when: "'k9s_linux_amd64.deb' in item.name"
 
+
 ### bypassing ansible bug #80709
 - name: parse output to get the download url
   set_fact:
     download_url: "{{ item | replace('\"', '') | replace(' ','') }}"
   loop: "{{ k9s_latest.stdout_lines }}"
   when: item is regex('k9s_linux_amd64.deb')
+
+- name: debug
+  debug:
+    msg: "{{download_url}}"
 
 - name: installing k9s
   apt:
