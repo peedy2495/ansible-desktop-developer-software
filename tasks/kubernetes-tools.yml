@@ -81,7 +81,7 @@
     #  Content-Type: "Accept: application/vnd.github.v3+json"
     #body_format: json
   register: k9s_latest
-
+  tags: wip
 
 - name: kubernetes - install k9s - pull package
   loop: "{{ k9s_latest.json.assets }}"
@@ -90,7 +90,7 @@
   apt:
     deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
   when: "'k9s_linux_amd64.deb' in item.name"
-
+  tags: wip
 
 ### bypassing ansible bug #80709
 # - name: parse output to get the download url
