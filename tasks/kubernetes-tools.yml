@@ -72,7 +72,7 @@
         autoclean: true
 
 - name: kubernetes - install k9s - determine latest tag @GitHub
-  shell: 'curl -s -H "Accept: application/json" -X GET "http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest" | jq'
+  shell: 'curl -s -H "Accept: application/json" -X GET "http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest"'
   ### BUG in ansible 2.14.5 https://github.com/ansible/ansible/issues/80709
   # uri:
   #  # url: http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest
