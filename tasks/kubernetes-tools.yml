@@ -98,8 +98,6 @@
   set_fact:
     download_url: "{{ item | replace('\"', '') | replace(' ','') }}"
   loop: "{{ k9s_latest.stdout_lines }}"
-  loop_control:
-    label: "{{ item.name }}"
   when: item is regex('k9s_linux_amd64.deb')
   tags: wip
 
