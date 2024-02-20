@@ -78,9 +78,9 @@
     url: http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest
     #url: https://api.github.com/repos/derailed/k9s/releases/latest
     return_content: true
-    # headers:
-      # Content-Type: "Accept: application/vnd.github.v3+json"
-    # body_format: json
+    headers:
+      Content-Type: "Content-Type:application/json"
+    body_format: json
   register: k9s_latest
   tags: wip
 
