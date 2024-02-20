@@ -98,7 +98,7 @@
     download_url: "{{ item | replace('\"', '') | replace(' ','') }}"
   loop: "{{ k9s_latest.stdout_lines }}"
   loop_control:
-    no_log: true
+    label: "{{ item.name }}"
   when: item is regex('k9s_linux_amd64.deb')
 
 - name: debug
