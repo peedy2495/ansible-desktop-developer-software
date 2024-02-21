@@ -71,41 +71,24 @@
         autoremove: true
         autoclean: true
 
-- name: kubernetes - install k9s - determine latest tag @GitHub
-  shell: 'curl -s -H "Accept: application/json" -X GET "http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest" | jq'
-  ### BUG in ansible 2.14.5 https://github.com/ansible/ansible/issues/80709
-  #uri:
-  #  url: http://ubuntu-proxy:8081/repository/raw-api.github/repos/derailed/k9s/releases/latest
-  #  return_content: true
-  #  headers:
-  #    Content-Type: "Accept: application/vnd.github.v3+json"
-  #  body_format: json
-  register: k9s_latest
+    - name: "{{ github_repository }} - query github api content for latest release"
+      uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+        headers:
+          X-API-Key: "{{portainer_token}}"
+        body_format: json
+      register: api
 
+    - name: "{{ github_repository }} - convert api content to json"
+      set_fact:
+        api_json: "{{ api.content | from_json }}"
 
-# - name: kubernetes - install k9s - pull package
-  # loop: "{{ k9s_latest.json.assets }}"
-  # loop_control:
-    # label: "{{ item.name }}"
-  # apt:
-    # deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-  # when: "'k9s_linux_amd64.deb' in item.name"
-
-
-### bypassing ansible bug #80709
-- name: parse output to get the download url
-  set_fact:
-    download_url: "{{ item | replace('\"', '') | replace(' ','') }}"
-  loop: "{{ k9s_latest.stdout_lines }}"
-  loop_control:
-    label: "k9s_latest"
-  when: item is regex('k9s_linux_amd64.deb')
-
-- name: debug
-  debug:
-    msg: "{{download_url}}"
-
-- name: installing k9s
-  apt:
-    deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ download_url.split("github.com")[1] }}'
-    
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      apt:
+        deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+      when: github_package_name in item.name 
