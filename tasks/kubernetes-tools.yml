@@ -83,7 +83,7 @@
         api_json: "{{ api.content | from_json }}"
 
     - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
-      loop: "{{ api_json.assets }}"
+      loop: "{{ api_json }}"
       loop_control:
         label: "{{ item.name }}"
       apt:
