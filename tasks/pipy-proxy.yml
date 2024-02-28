@@ -1,5 +1,5 @@
 - name: pipy-proxy - set hosts entry
-   ansible.builtin.lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: "{{ pipy_proxy_ip }} {{ pipy_proxy }}"
     state: present
