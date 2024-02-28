@@ -212,6 +212,15 @@
         autoremove: true
         autoclean: true
 
+    - name: docker-ce - configure insecure registries
+      ansible.builtin.template:
+        src: daemon.json.j2
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: 0644
+        force: yes
+
     - name: docker-ce - gathering current environment
       ansible.builtin.stat:
         path: /home/.docker
