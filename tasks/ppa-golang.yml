@@ -1,7 +1,7 @@
 - name: install golang
   block:
     - name: ppa-golang - deploy ppa gpg key
-      blockinfile:
+      ansible.builtin.blockinfile:
         path: /etc/apt/trusted.gpg.d/ppa-golang-backports.asc
         create: true
         block: |
@@ -22,14 +22,14 @@
         mode: 644
 
     - name: ppa-golang - create ppa repository definition
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ubuntu-jammy-ppa-golang-backports.list
         search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-golang-backports jammy main'
         create: true
 
     - name: ppa-golang - install
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         install_recommends: true
         state: latest
@@ -38,26 +38,26 @@
       register: golang_install
 
     - name: ppa-golang - remove existent exec symlink 
-      file:
+      ansible.builtin.file:
         path: /usr/local/sbin/go
         state: absent
       when: golang_install is changed
       ignore_errors: true
 
     - name: ppa-golang - create new exec symlink
-      file:
+      ansible.builtin.file:
         src: "/usr/lib/go-{{ golang_version }}/bin/go"
         dest: /usr/local/sbin/go
         state: link
       when: golang_install is changed
 
     - name: ppa-golang - cleanup
-      apt:
+      ansible.builtin.apt:
         autoremove: true
         autoclean: true
 
     - name: ppa-golang - install language server fron native repos
-      apt:
+      ansible.builtin.apt:
         update_cache: false
         install_recommends: true
         state: latest

@@ -1,7 +1,7 @@
 - name: install kubernetes tools
   block:
     - name: kubernetes - deploy ppa gpg key  
-      blockinfile:
+      ansible.builtin.blockinfile:
         path: /etc/apt/trusted.gpg.d/google.asc
         create: true
         block: |
@@ -52,14 +52,14 @@
         mode: 644
 
     - name: kubernetes - create ppa repository definition
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/kubernetes.list
         search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-kubernetes kubernetes-xenial main'
         create: true
 
     - name: kubernetes - install native tools
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         install_recommends: true
         state: latest
@@ -67,25 +67,25 @@
           - kubectl
 
     - name: kubernetes - cleanup
-      apt:
+      ansible.builtin.apt:
         autoremove: true
         autoclean: true
 
     - name: "{{ github_repository }} - query github api content for latest release"
-      uri:
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
 
     - name: "{{ github_repository }} - convert api content to json"
-      set_fact:
+      ansible.builtin.set_fact:
         api_json: "{{ api.content | from_json }}"
 
     - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
-      apt:
+      ansible.builtin.apt:
         deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
       when: github_package_name in item.name

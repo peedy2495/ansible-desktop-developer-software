@@ -1,7 +1,7 @@
 - name: install nodejs
   block:
     - name: nodejs - deploy ppa gpg key 
-      blockinfile:
+      ansible.builtin.blockinfile:
         path: /etc/apt/trusted.gpg.d/nodesource.asc
         create: true
         block: |
@@ -37,14 +37,14 @@
         mode: 644
 
     - name: nodejs - create ppa repository definition
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/nodejs.list
         search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-nodejs nodistro main'
         create: true
 
     - name: nodejs - install
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         install_recommends: true
         state: latest
@@ -52,6 +52,6 @@
           - nodejs
 
     - name: nodejs - cleanup
-      apt:
+      ansible.builtin.apt:
         autoremove: true
         autoclean: true

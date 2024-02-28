@@ -1,15 +1,15 @@
-github_proxy_port: "8081"
-github_proxy_proto: "http"
-github_proxy_ip: "192.168.123.180"
+github_proxy_port: "{{ nexusPort }}"
+github_proxy_proto: "{{ nexusProto }}"
+github_proxy_ip: "{{ nexusIP }}"
 github_proxy_path: "/repository/raw-github"
 github_proxy_api_path: "/repository/raw-api.github"
 github_repository: "derailed/k9s"
 github_package_name: "k9s_linux_amd64.deb"
 
 pipy_proxy: pipy-proxy
-pipy_proxy_port: 8081
-pipy_proxy_proto: http
-pipy_proxy_ip: 192.168.123.180
+pipy_proxy_port: "{{ nexusPort }}"
+pipy_proxy_proto: "{{ nexusProto }}"
+pipy_proxy_ip: "{{ nexusIP }}"
 mitogen_version: 0.3.4
 
 golang_version: "1.21"

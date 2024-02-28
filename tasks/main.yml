@@ -1,7 +1,7 @@
 #bfe001
 
 - name: software from native sources
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     install_recommends: true
     pkg:
@@ -21,37 +21,37 @@
     - misc-from-native
 
 - name: install ansible from ppa
-  import_tasks: ppa-ansible-6.yml
+  ansible.builtin.import_tasks: ppa-ansible-6.yml
   tags:
     - ppa-ansible-6
 
 - name: add pipy-proxy
-  import_tasks: pipy-proxy.yml
+  ansible.builtin.import_tasks: pipy-proxy.yml
   tags:
     - pypi-proxy
     - mitogen
 
 - name: install mitogen
-  import_tasks: ansible-mitogen.yml
+  ansible.builtin.import_tasks: ansible-mitogen.yml
   tags:
     - mitogen
 
 - name: install golang from ppa
-  import_tasks: ppa-golang.yml
+  ansible.builtin.import_tasks: ppa-golang.yml
   tags:
     - ppa-golang
 
 - name: install docker-ce
-  import_tasks: docker-ce.yml
+  ansible.builtin.import_tasks: docker-ce.yml
   tags:
     - docker-ce
 
 - name: install nodejs
-  import_tasks: nodejs.yml
+  ansible.builtin.import_tasks: nodejs.yml
   tags:
     - nodejs
 
 - name: install kubernetes tools
-  import_tasks: kubernetes-tools.yml
+  ansible.builtin.import_tasks: kubernetes-tools.yml
   tags:
     - kubernetes-tools

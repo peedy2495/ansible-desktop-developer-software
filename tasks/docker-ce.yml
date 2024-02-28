@@ -1,7 +1,7 @@
 - name: install docker-ce
   block:
     - name: docker-ce - deploy ppa gpg key 
-      blockinfile:
+      ansible.builtin.blockinfile:
         path: /etc/apt/trusted.gpg.d/docker-ce.asc
         create: true
         block: |
@@ -190,14 +190,14 @@
         mode: 644
 
     - name: docker-ce - create ppa repository definition
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/docker-ce.list
         search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-docker-ce jammy stable'
         create: true
 
     - name: docker-ce - install
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         install_recommends: true
         state: latest
@@ -208,34 +208,34 @@
           - docker-compose
 
     - name: docker-ce - cleanup
-      apt:
+      ansible.builtin.apt:
         autoremove: true
         autoclean: true
 
     - name: docker-ce - gathering current environment
-      stat:
+      ansible.builtin.stat:
         path: /home/.docker
       register: docker_home
 
     - name: docker-ce - stop service
-      systemd:
+      ansible.builtin.systemd:
         name: docker.service
         state: stopped
       when: not docker_home.stat.exists
 
     - name: docker-ce - move docker-data
-      shell: mv /var/lib/docker/ /home/.docker/
+      ansible.builtin.shell: mv /var/lib/docker/ /home/.docker/
       when: not docker_home.stat.exists
 
     - name: docker-ce - create symlinks
-      file:
+      ansible.builtin.file:
         src: /home/.docker/
         dest: /var/lib/docker
         state: link
       when: not docker_home.stat.exists
 
     - name: docker-ce - start service
-      systemd:
+      ansible.builtin.systemd:
         name: docker.service
         state: started
       when: not docker_home.stat.exists
