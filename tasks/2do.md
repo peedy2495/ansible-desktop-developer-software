@@ -1,5 +1,4 @@
-tmux
-starship.rs
+
 helix editor
 lazygit
 zoxied

@@ -71,25 +71,25 @@
         autoremove: true
         autoclean: true
 
-    - ansible.builtin.set_fact:
-        github_repository: "derailed/k9s"
-        github_package_name: "k9s_linux_amd64.deb"
+- ansible.builtin.set_fact:
+    github_repository: "derailed/k9s"
+    github_package_name: "k9s_linux_amd64.deb"
 
-    - name: "{{ github_repository }} - query github api content for latest release"
-      ansible.builtin.uri:
-        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
-        validate_certs: false
-        return_content: true
-      register: api
+- name: "{{ github_repository }} - query github api content for latest release"
+  ansible.builtin.uri:
+    url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+    validate_certs: false
+    return_content: true
+  register: api
 
-    - name: "{{ github_repository }} - convert api content to json"
-      ansible.builtin.set_fact:
-        api_json: "{{ api.content | from_json }}"
+- name: "{{ github_repository }} - convert api content to json"
+  ansible.builtin.set_fact:
+    api_json: "{{ api.content | from_json }}"
 
-    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
-      loop: "{{ api_json.assets }}"
-      loop_control:
-        label: "{{ item.name }}"
-      ansible.builtin.apt:
-        deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-      when: github_package_name in item.name
+- name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+  loop: "{{ api_json.assets }}"
+  loop_control:
+    label: "{{ item.name }}"
+  ansible.builtin.apt:
+    deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+  when: github_package_name in item.name
