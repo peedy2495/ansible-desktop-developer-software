@@ -13,9 +13,9 @@
     - git
     - git-lfs
     - ldap-utils
-    - postgresql
+    #- postgresql
     - postgresql-client
-    - postgresql-contrib
+    #- postgresql-contrib
     - qemu-kvm
   tags:
     - misc-from-native
