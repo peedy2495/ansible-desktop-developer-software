@@ -205,4 +205,9 @@
       command: gunzip /tmp/cheat-linux-amd64.gz
 
     - name: "{{ github_repository }} - rename binary"
-      command: mv /tmp/cheat-linux-amd64 /usr/local/bin/cheat ;chmod 0755 /usr/local/bin/cheat
+      command: mv /tmp/cheat-linux-amd64 /usr/local/bin/cheat
+
+    - name: "{{ github_repository }} - correct permissions"
+      file:
+        path: /usr/local/bin/cheat
+        mode: '0755'
