@@ -55,3 +55,8 @@
   ansible.builtin.import_tasks: kubernetes-tools.yml
   tags:
     - kubernetes-tools
+
+- name: install commandline tools
+  ansible.builtin.import_tasks: commandline-tools.yml
+  tags:
+    - commandline-tools
