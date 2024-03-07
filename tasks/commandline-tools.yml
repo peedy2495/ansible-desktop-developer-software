@@ -147,3 +147,30 @@
       ansible.builtin.apt:
         deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
       when: github_package_name in item.name
+
+- name: install xplr
+  block:
+    - ansible.builtin.set_fact:
+        github_repository: "sayanarijit/xplr"
+        github_package_name: "xplr-linux.tar.gz"
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+
+    - name: "{{ github_repository }} - convert api content to json"
+      ansible.builtin.set_fact:
+        api_json: "{{ api.content | from_json }}"
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+        dest: /usr/local/bin
+        remote_src: yes
+      when: github_package_name == item.name
