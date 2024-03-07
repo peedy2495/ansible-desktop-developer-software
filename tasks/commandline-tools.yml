@@ -26,7 +26,9 @@
   loop: "{{ api_json.assets }}"
   loop_control:
     label: "{{ item.name }}"
-  ansible.builtin.unarchive:
-    src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-    dest: /usr/local/bin
+  debug:
+    msg: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+  # ansible.builtin.unarchive:
+  #   src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+  #   dest: /usr/local/bin
   when: github_package_name == item.name

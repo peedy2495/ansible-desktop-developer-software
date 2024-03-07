@@ -3,8 +3,6 @@ github_proxy_proto: "{{ nexusProto }}"
 github_proxy_ip: "{{ nexusIP }}"
 github_proxy_path: "/repository/raw-github"
 github_proxy_api_path: "/repository/raw-api.github"
-github_repository: "derailed/k9s"
-github_package_name: "k9s_linux_amd64.deb"
 
 pipy_proxy: pipy-proxy
 pipy_proxy_port: "{{ nexusPort }}"
