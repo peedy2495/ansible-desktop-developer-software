@@ -196,7 +196,7 @@
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
-      ansible.builtin.geturl:
+      ansible.builtin.get_url:
         url: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
         dest: /tmp
         remote_src: yes
