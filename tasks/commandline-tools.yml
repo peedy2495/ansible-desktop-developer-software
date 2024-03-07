@@ -214,5 +214,5 @@
     
     - name: "{{ github_repository }} - download community cheatsheets"
       ansible.builtin.get_url:
-        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}github.com/cheat/cheatsheets/archive/refs/heads/master.zip"
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}/cheat/cheatsheets/archive/refs/heads/master.zip"
         dest: /opt/cheatsheets-community.zip
