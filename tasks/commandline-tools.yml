@@ -8,7 +8,7 @@
     - fonts-firacode    # starship requirement
 
 - ansible.builtin.set_fact:
-    github_repository: "startship/starship"
+    github_repository: "starship/starship"
     github_package_name: "starship-x86_64-unknown-linux-gnu.tar.gz"
 
 - name: "{{ github_repository }} - query github api content for latest release"
