@@ -174,3 +174,33 @@
         dest: /usr/local/bin
         remote_src: yes
       when: github_package_name == item.name
+
+- name: install cheat
+  block:
+    - ansible.builtin.set_fact:
+        github_repository: "cheat/cheat"
+        github_package_name: "cheat-linux-amd64.gz"
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+
+    - name: "{{ github_repository }} - convert api content to json"
+      ansible.builtin.set_fact:
+        api_json: "{{ api.content | from_json }}"
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+        dest: /usr/local/bin
+        remote_src: yes
+      when: github_package_name == item.name
+
+    - name: "{{ github_repository }} - rename binary"
+      command: mv /usr/local/bin/cheat-linux-amd64 /usr/local/bin/cheat
