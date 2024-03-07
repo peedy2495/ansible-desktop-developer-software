@@ -1,5 +1,5 @@
 
-helix editor
+
 lazygit
 zoxied
 xplr

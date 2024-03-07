@@ -12,18 +12,18 @@
     - ansible.builtin.set_fact:
         github_repository: "starship/starship"
         github_package_name: "starship-x86_64-unknown-linux-gnu.tar.gz"
-    
+
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
-    
+
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
         api_json: "{{ api.content | from_json }}"
-    
+
     - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
@@ -93,3 +93,32 @@
       ansible.builtin.apt:
         autoremove: true
         autoclean: true
+
+- name: install lazygit
+  block:
+    - ansible.builtin.set_fact:
+        github_repository: "jesseduffield/lazygit"
+        github_package_name: "Linux_x86_64.tar.gz"
+    
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+    
+    - name: "{{ github_repository }} - convert api content to json"
+      ansible.builtin.set_fact:
+        api_json: "{{ api.content | from_json }}"
+    
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+        dest: /usr/local/bin
+        remote_src: yes
+        extra_opts:
+        - 'lazygit'
+      when: github_package_name in item.name
