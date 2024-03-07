@@ -1,6 +1,6 @@
 
 
 lazygit
-zoxied
+zoxide
 xplr
 cheat - cmd descr
