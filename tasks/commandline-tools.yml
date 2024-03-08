@@ -6,6 +6,9 @@
     - tmux
     - fonts-powerline   # starship requirement
     - fonts-firacode    # starship requirement
+    - xclip
+    - fzf
+
 
 - name: install starship
   block:
