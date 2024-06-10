@@ -18,10 +18,19 @@
 
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
+      when: nexus
 
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
@@ -32,10 +41,20 @@
       loop_control:
         label: "{{ item.name }}"
       ansible.builtin.unarchive:
+        src: '{{ item.browser_download_url }}'
+        dest: /usr/local/bin
+        remote_src: yes
+      when: when not nexus and github_package_name == item.name
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
         src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
         dest: /usr/local/bin
         remote_src: yes
-      when: github_package_name == item.name
+      when: when nexus and github_package_name == item.name
 
 - name: install helix editor
   block:
@@ -81,8 +100,17 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-helix.list
         search_string: 'deb'
+        line: 'deb http://ppa.launchpadcontent.net/maveonair/helix-editor/ubuntu jammy main'
+        create: true
+      when: not nexus
+
+    - name: helix-editor - create ppa repository definition
+      ansible.builtin.lineinfile:
+        path: /etc/save/apt/sources.list.d/ppa-helix.list
+        search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-helix jammy main'
         create: true
+      when: nexus
 
     - name: helix-editor - install native tools
       ansible.builtin.apt:
@@ -105,15 +133,36 @@
     
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
+      when: nexus
     
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
         api_json: "{{ api.content | from_json }}"
     
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{ item.browser_download_url }}'
+        dest: /usr/local/bin
+        remote_src: yes
+        extra_opts:
+        - 'lazygit'
+      when: not nexus and github_package_name in item.name
+
     - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
@@ -124,7 +173,7 @@
         remote_src: yes
         extra_opts:
         - 'lazygit'
-      when: github_package_name in item.name
+      when: nexus and github_package_name in item.name
 
 - name: install zoxide
   block:
@@ -134,22 +183,39 @@
     
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
+      when: nexus
     
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
         api_json: "{{ api.content | from_json }}"
-    
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.apt:
+        deb: '{{ item.browser_download_url }}'
+      when: not nexus and github_package_name in item.name
+
     - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
       ansible.builtin.apt:
         deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-      when: github_package_name in item.name
+      when: nexus and github_package_name in item.name
 
 - name: install xplr
   block:
@@ -159,10 +225,19 @@
 
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
+      when: nexus
 
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
@@ -173,10 +248,20 @@
       loop_control:
         label: "{{ item.name }}"
       ansible.builtin.unarchive:
+        src: '{{ item.browser_download_url }}'
+        dest: /usr/local/bin
+        remote_src: yes
+      when: not nexus and github_package_name == item.name
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
         src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
         dest: /usr/local/bin
         remote_src: yes
-      when: github_package_name == item.name
+      when: nexus and github_package_name == item.name
 
 - name: install cheat
   block:
@@ -186,10 +271,19 @@
 
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
         return_content: true
       register: api
+      when: nexus
 
     - name: "{{ github_repository }} - convert api content to json"
       ansible.builtin.set_fact:
@@ -200,9 +294,18 @@
       loop_control:
         label: "{{ item.name }}"
       ansible.builtin.get_url:
+        url: '{{ item.browser_download_url }}'
+        dest: /tmp
+      when: not nexus and github_package_name == item.name
+
+    - name: "{{ github_repository }} - downloading {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.get_url:
         url: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
         dest: /tmp
-      when: github_package_name == item.name
+      when: nexus and github_package_name == item.name
 
     - name: "{{ github_repository }} - uncompess archive"
       command: gunzip /tmp/cheat-linux-amd64.gz
@@ -214,8 +317,16 @@
       file:
         path: /usr/local/bin/cheat
         mode: '0755'
-    
+
+    # The cheat-template package will only be downloaded. You need to unpack this one into your home directory yourself.
+    - name: "{{ github_repository }} - download community cheatsheets"
+      ansible.builtin.get_url:
+        url: "https://github.com/cheat/cheatsheets/archive/refs/heads/master.zip"
+        dest: /opt/cheatsheets-community.zip
+      when: not nexus
+
     - name: "{{ github_repository }} - download community cheatsheets"
       ansible.builtin.get_url:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}/cheat/cheatsheets/archive/refs/heads/master.zip"
         dest: /opt/cheatsheets-community.zip
+      when: nexus

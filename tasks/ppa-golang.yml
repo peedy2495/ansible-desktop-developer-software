@@ -25,8 +25,17 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ubuntu-jammy-ppa-golang-backports.list
         search_string: 'deb'
+        line: 'deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu jammy main'
+        create: true
+      when: not nexus
+
+    - name: ppa-golang - create ppa repository definition
+      ansible.builtin.lineinfile:
+        path: /etc/save/apt/sources.list.d/ubuntu-jammy-ppa-golang-backports.list
+        search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-golang-backports jammy main'
         create: true
+      when: nexus
 
     - name: ppa-golang - install
       ansible.builtin.apt:

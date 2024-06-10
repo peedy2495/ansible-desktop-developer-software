@@ -30,6 +30,7 @@
   tags:
     - pypi-proxy
     - mitogen
+  when: nexus
 
 - name: install mitogen
   ansible.builtin.import_tasks: ansible-mitogen.yml

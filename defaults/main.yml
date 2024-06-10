@@ -1,3 +1,6 @@
+# use existing nexus chache
+nexus: yes
+
 github_proxy_port: "{{ nexusPort }}"
 github_proxy_proto: "{{ nexusProto }}"
 github_proxy_ip: "{{ nexusIP }}"

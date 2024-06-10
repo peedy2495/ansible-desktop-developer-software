@@ -41,8 +41,17 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
         search_string: 'deb'
+        line: 'deb https://ppa.launchpadcontent.net/ansible/ansible/ubuntu jammy main'
+        create: true
+      when: not nexus
+
+    - name: ppa-ansible 6 - create repository definition
+      ansible.builtin.lineinfile:
+        path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
+        search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-ansible-6 jammy main'
         create: true
+      when: nexus
 
     - name: ppa-ansible 6 - install
       ansible.builtin.apt:

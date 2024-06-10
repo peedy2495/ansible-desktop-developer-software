@@ -40,8 +40,17 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/nodejs.list
         search_string: 'deb'
+        line: 'deb https://deb.nodesource.com/node_20.x nodistro main'
+        create: true
+      when: not nexus
+
+    - name: nodejs - create ppa repository definition
+      ansible.builtin.lineinfile:
+        path: /etc/save/apt/sources.list.d/nodejs.list
+        search_string: 'deb'
         line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-nodejs nodistro main'
         create: true
+      when: nexus
 
     - name: nodejs - install
       ansible.builtin.apt:

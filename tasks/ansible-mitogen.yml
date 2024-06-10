@@ -1,4 +1,4 @@
-- name: mitogen {{ mitogen_version }} - inbstall
+- name: mitogen {{ mitogen_version }} - install
   ansible.builtin.pip:
     name: mitogen=={{ mitogen_version }}
   register: mitogen
