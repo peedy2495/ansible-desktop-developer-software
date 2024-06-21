@@ -61,3 +61,11 @@
   ansible.builtin.import_tasks: commandline-tools.yml
   tags:
     - commandline-tools
+
+- name: install nvidia container toolkit
+  ansible.builtin.import_tasks: nvidia-container-toolkit.yml
+  tags:
+    - nvidia-container-toolkit
+
+
+    
