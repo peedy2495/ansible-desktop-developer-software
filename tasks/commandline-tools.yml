@@ -24,7 +24,7 @@
       register: api
       when: not nexus
 
-    - name: "{{ github_repository }} - query github api content for latest release"
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
@@ -44,9 +44,9 @@
         src: '{{ item.browser_download_url }}'
         dest: /usr/local/bin
         remote_src: yes
-      when: when not nexus and github_package_name == item.name
+      when: not nexus and github_package_name == item.name
 
-    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
@@ -54,7 +54,8 @@
         src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
         dest: /usr/local/bin
         remote_src: yes
-      when: when nexus and github_package_name == item.name
+      when: nexus and github_package_name == item.name
+  tags: starship
 
 - name: install helix editor
   block:
