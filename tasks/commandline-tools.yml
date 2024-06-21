@@ -105,7 +105,7 @@
         create: true
       when: not nexus
 
-    - name: helix-editor - create ppa repository definition
+    - name: helix-editor - create ppa repository definition via proxy
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-helix.list
         search_string: 'deb'
@@ -125,6 +125,7 @@
       ansible.builtin.apt:
         autoremove: true
         autoclean: true
+  tags: helix
 
 - name: install lazygit
   block:
@@ -140,7 +141,7 @@
       register: api
       when: not nexus
 
-    - name: "{{ github_repository }} - query github api content for latest release"
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
@@ -164,7 +165,7 @@
         - 'lazygit'
       when: not nexus and github_package_name in item.name
 
-    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
@@ -175,6 +176,7 @@
         extra_opts:
         - 'lazygit'
       when: nexus and github_package_name in item.name
+  tags: lazygit
 
 - name: install zoxide
   block:
@@ -190,7 +192,7 @@
       register: api
       when: not nexus
 
-    - name: "{{ github_repository }} - query github api content for latest release"
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
@@ -210,13 +212,14 @@
         deb: '{{ item.browser_download_url }}'
       when: not nexus and github_package_name in item.name
 
-    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
       ansible.builtin.apt:
         deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
       when: nexus and github_package_name in item.name
+  tags: zoxide
 
 - name: install xplr
   block:
@@ -232,7 +235,7 @@
       register: api
       when: not nexus
 
-    - name: "{{ github_repository }} - query github api content for latest release"
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
@@ -254,7 +257,7 @@
         remote_src: yes
       when: not nexus and github_package_name == item.name
 
-    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
@@ -263,6 +266,7 @@
         dest: /usr/local/bin
         remote_src: yes
       when: nexus and github_package_name == item.name
+  tags: xplr
 
 - name: install cheat
   block:
@@ -278,7 +282,7 @@
       register: api
       when: not nexus
 
-    - name: "{{ github_repository }} - query github api content for latest release"
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
       ansible.builtin.uri:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
         validate_certs: false
@@ -299,7 +303,7 @@
         dest: /tmp
       when: not nexus and github_package_name == item.name
 
-    - name: "{{ github_repository }} - downloading {{ github_package_name }}:latest" 
+    - name: "{{ github_repository }} - downloading {{ github_package_name }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
@@ -326,8 +330,9 @@
         dest: /opt/cheatsheets-community.zip
       when: not nexus
 
-    - name: "{{ github_repository }} - download community cheatsheets"
+    - name: "{{ github_repository }} - download community cheatsheets via proxy"
       ansible.builtin.get_url:
         url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}/cheat/cheatsheets/archive/refs/heads/master.zip"
         dest: /opt/cheatsheets-community.zip
       when: nexus
+  tags: cheat
