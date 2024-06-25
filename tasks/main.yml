@@ -14,10 +14,9 @@
     - git-lfs
     - ldap-utils
     - nmap
-    #- postgresql
     - postgresql-client
-    #- postgresql-contrib
     - qemu-kvm
+    - syslinux-common
   tags:
     - misc-from-native
 
