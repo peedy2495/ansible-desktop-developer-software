@@ -16,6 +16,7 @@
     - nmap
     - postgresql-client
     - qemu-kvm
+    - shim-signed
     - syslinux-common
   tags:
     - misc-from-native
