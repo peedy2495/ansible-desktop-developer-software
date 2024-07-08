@@ -1,23 +1,21 @@
-#bfe001
-
 - name: software from native sources
   ansible.builtin.apt:
     update_cache: true
     install_recommends: true
     pkg:
-    - build-essential
-    - cloc
-    - cpp
-    - fonts-jetbrains-mono
-    - gcc
-    - git
-    - git-lfs
-    - ldap-utils
-    - nmap
-    - postgresql-client
-    - qemu-kvm
-    - shim-signed
-    - syslinux-common
+      - build-essential
+      - cloc
+      - cpp
+      - fonts-jetbrains-mono
+      - gcc
+      - git
+      - git-lfs
+      - ldap-utils
+      - nmap
+      - postgresql-client
+      - qemu-kvm
+      - shim-signed
+      - syslinux-common
   tags:
     - misc-from-native
 
@@ -67,6 +65,3 @@
   ansible.builtin.import_tasks: nvidia-container-toolkit.yml
   tags:
     - nvidia-container-toolkit
-
-
-    
