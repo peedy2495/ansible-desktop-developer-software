@@ -16,6 +16,8 @@
       - qemu-kvm
       - shim-signed
       - syslinux-common
+      - virt-manager
+
   tags:
     - misc-from-native
 
