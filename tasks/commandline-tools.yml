@@ -283,6 +283,10 @@
     - ansible.builtin.set_fact:
         github_repository: "mkasberg/ghostty-ubuntu"
         github_package_name: "amd64_{{ ubuntu_release.stdout }}.deb"
+
+    - debug:
+      msg: "{{ github_package_name }}"
+
     
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
