@@ -286,7 +286,7 @@
 
     - name: debugging
       debug:
-        msg: "{{ github_package_name }}"
+        msg: "{{ ubuntu_release }}"
 
     
     - name: "{{ github_repository }} - query github api content for latest release"
