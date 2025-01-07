@@ -273,6 +273,54 @@
       when: nexus and github_package_name in item.name
   tags: zoxide
 
+- name: install ghostty-ubuntu
+  block:
+    - name: get ubuntu Version
+      ansible.builtin.command:
+        cmd: 'source /etc/lsb-release; echo $DISTRIB_RELEASE'
+      register: ubuntu_release
+
+    - ansible.builtin.set_fact:
+        github_repository: "mkasberg/ghostty-ubuntu"
+        github_package_name: "amd64_{{ ubuntu_release.stdout }}.deb"
+    
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
+      ansible.builtin.uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: nexus
+    
+    - name: "{{ github_repository }} - convert api content to json"
+      ansible.builtin.set_fact:
+        api_json: "{{ api.content | from_json }}"
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.apt:
+        deb: '{{ item.browser_download_url }}'
+      when: not nexus and github_package_name in item.name
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.apt:
+        deb: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+      when: nexus and github_package_name in item.name
+  tags: ghostty-ubuntu
+
 - name: install xplr
   block:
     - ansible.builtin.set_fact:
