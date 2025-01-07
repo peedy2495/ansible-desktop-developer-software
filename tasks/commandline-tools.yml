@@ -8,6 +8,7 @@
     - fonts-firacode    # starship requirement
     - xclip
     - fzf
+    - ripgrep
 
 
 - name: install starship
