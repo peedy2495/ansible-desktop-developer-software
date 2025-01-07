@@ -276,9 +276,9 @@
 - name: install ghostty-ubuntu
   block:
     - name: get ubuntu Version
-      ansible.builtin.command:
-        cmd: source /etc/lsb-release; echo $DISTRIB_RELEASE
+      ansible.builtin.shell: source /etc/lsb-release; echo $DISTRIB_RELEASE
       register: ubuntu_release
+
 
     - ansible.builtin.set_fact:
         github_repository: "mkasberg/ghostty-ubuntu"
