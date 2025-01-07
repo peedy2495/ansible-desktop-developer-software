@@ -277,6 +277,8 @@
   block:
     - name: get ubuntu Version
       ansible.builtin.shell: source /etc/lsb-release; echo $DISTRIB_RELEASE
+      args:
+        executable: /bin/bash
       register: ubuntu_release
 
 
