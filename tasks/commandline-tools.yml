@@ -178,6 +178,57 @@
       when: nexus and github_package_name in item.name
   tags: lazygit
 
+- name: install lazydocker
+  block:
+    - ansible.builtin.set_fact:
+        github_repository: "jesseduffield/lazydocker"
+        github_package_name: "Linux_x86_64.tar.gz"
+    
+    - name: "{{ github_repository }} - query github api content for latest release"
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: not nexus
+
+    - name: "{{ github_repository }} - query github api content for latest release via proxy"
+      ansible.builtin.uri:
+        url: "{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_api_path}}/repos/{{ github_repository }}/releases/latest"
+        validate_certs: false
+        return_content: true
+      register: api
+      when: nexus
+    
+    - name: "{{ github_repository }} - convert api content to json"
+      ansible.builtin.set_fact:
+        api_json: "{{ api.content | from_json }}"
+    
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{ item.browser_download_url }}'
+        dest: /usr/local/bin
+        remote_src: yes
+        extra_opts:
+        - 'lazydocker'
+      when: not nexus and github_package_name in item.name
+
+    - name: "{{ github_repository }} - installing {{ github_package_name }}:latest via proxy" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.unarchive:
+        src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+        dest: /usr/local/bin
+        remote_src: yes
+        extra_opts:
+        - 'lazydocker'
+      when: nexus and github_package_name in item.name
+  tags: lazydocker
+
 - name: install zoxide
   block:
     - ansible.builtin.set_fact:
