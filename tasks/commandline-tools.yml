@@ -166,7 +166,7 @@
         label: "{{ item.name }}"
       ansible.builtin.set_fact:
         download_url: '{{ item.browser_download_url }}'
-        package: '{{ item.browser_download_url | urlsplit("path") }}' 
+        package: '{{ item.browser_download_url | basename }}' 
       when: not nexus and github_package_suffix in item.name
 
     - name: "{{ github_repository }} - get package name of variant {{ github_package_suffix }}:latest from proxy" 
@@ -175,7 +175,7 @@
         label: "{{ item.name }}"
       ansible.builtin.set_fact:
         download_url: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-        package: '{{ item.browser_download_url | urlsplit("path") }}' 
+        package: '{{ item.browser_download_url | basename }}' 
       when: nexus and github_package_suffix in item.name
 
     - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest"
