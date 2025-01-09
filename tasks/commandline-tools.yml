@@ -183,7 +183,6 @@
         src: '{{ download_url }}'
         dest: "{{ tmp_helix.path }}"
         remote_src: yes
-      when: not nexus and github_package_suffix in item.name
 
     - name: "{{ github_repository }} - create runtime path"
       ansible.builtin.file:
