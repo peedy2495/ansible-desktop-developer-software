@@ -160,7 +160,10 @@
         suffix: helix
       register: tmp_helix
 
-    - name: "{{ github_repository }} - installing variant {{ github_package_suffix }}:latest" 
+    - debug:
+      msg: "{{ tmp_helix }}"
+
+    - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
@@ -170,7 +173,7 @@
         remote_src: yes
       when: not nexus and github_package_suffix in item.name
 
-    - name: "{{ github_repository }} - installing variant {{ github_package_suffix }}:latest via proxy" 
+    - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest via proxy" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
