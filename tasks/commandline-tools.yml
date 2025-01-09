@@ -160,9 +160,6 @@
         suffix: helix
       register: tmp_helix
 
-    - debug:
-        msg: "{{ tmp_helix }}"
-
     - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
@@ -188,6 +185,16 @@
         path: /usr/lib/helix
         state: directory
         mode: '0644'
+
+    - debug:
+        msg:'{{ item.browser_download_url | urlsplit("path") }}'
+
+    - name: "{{ github_repository }} - install binary"
+      ansible.builtin.copy:
+        src: '{{ tmp_helix.path }}/{{ item.browser_download_url | urlsplit("path") }}/hx'
+        dest: "/usr/local/bin/hx"
+        remote_src: true
+        mode: '0755'
 
     # - name: "{{ github_repository }} - remove temporary package extraction path"
       # ansible.builtin.file:
