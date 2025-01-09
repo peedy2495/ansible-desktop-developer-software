@@ -132,7 +132,7 @@
   block:
     - ansible.builtin.set_fact:
         github_repository: "helix-editor/helix"
-        github_package_suffix: "linux.tar.xz "
+        github_package_suffix: "x86_64-linux.tar.xz"
     
     - name: "{{ github_repository }} - query github api content for latest release"
       ansible.builtin.uri:
