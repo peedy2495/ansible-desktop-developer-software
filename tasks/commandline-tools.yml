@@ -160,25 +160,30 @@
         suffix: helix
       register: tmp_helix
 
-    - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest" 
+    - name: "{{ github_repository }} - get package name of variant {{ github_package_suffix }}:latest" 
       loop: "{{ api_json.assets }}"
       loop_control:
         label: "{{ item.name }}"
+      ansible.builtin.set_fact:
+        download_url: '{{ item.browser_download_url }}'
+        package: '{{ item.browser_download_url | urlsplit("path") }}' 
+      when: not nexus and github_package_suffix in item.name
+
+    - name: "{{ github_repository }} - get package name of variant {{ github_package_suffix }}:latest from proxy" 
+      loop: "{{ api_json.assets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      ansible.builtin.set_fact:
+        download_url: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
+        package: '{{ item.browser_download_url | urlsplit("path") }}' 
+      when: nexus and github_package_suffix in item.name
+
+    - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest"
       ansible.builtin.unarchive:
-        src: '{{ item.browser_download_url }}'
+        src: '{{ download_url }}'
         dest: "{{ tmp_helix.path }}"
         remote_src: yes
       when: not nexus and github_package_suffix in item.name
-
-    - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest via proxy" 
-      loop: "{{ api_json.assets }}"
-      loop_control:
-        label: "{{ item.name }}"
-      ansible.builtin.unarchive:
-        src: '{{github_proxy_proto}}://{{github_proxy_ip}}:{{github_proxy_port}}{{github_proxy_path}}{{ item.browser_download_url | urlsplit("path") }}'
-        dest: "{{ tmp_helix.path }}"
-        remote_src: yes
-      when: nexus and github_package_suffix in item.name
 
     - name: "{{ github_repository }} - create runtime path"
       ansible.builtin.file:
@@ -188,11 +193,11 @@
 
     - name: debugging
       ansible.builtin.debug:
-        msg: '{{ item.browser_download_url | urlsplit("path") }}'
+        msg: '{{ package | replace(".tar.xz", "") }}'
 
     - name: "{{ github_repository }} - install binary"
       ansible.builtin.copy:
-        src: '{{ tmp_helix.path }}/{{ item.browser_download_url | urlsplit("path") }}/hx'
+        src: '{{ tmp_helix.path }}/{{ package | replace(".tar.xz", "") }}/hx'
         dest: "/usr/local/bin/hx"
         remote_src: true
         mode: '0755'
