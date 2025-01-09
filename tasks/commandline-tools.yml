@@ -186,8 +186,8 @@
         state: directory
         mode: '0644'
 
-    - debug:
-        msg:'{{ item.browser_download_url | urlsplit("path") }}'
+    - ansible.builtin.debug:
+        msg: '{{ item.browser_download_url | urlsplit("path") }}'
 
     - name: "{{ github_repository }} - install binary"
       ansible.builtin.copy:
