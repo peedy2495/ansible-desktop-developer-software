@@ -161,7 +161,7 @@
       register: tmp_helix
 
     - debug:
-      msg: "{{ tmp_helix }}"
+        msg: "{{ tmp_helix }}"
 
     - name: "{{ github_repository }} - downloading variant {{ github_package_suffix }}:latest" 
       loop: "{{ api_json.assets }}"
