@@ -110,7 +110,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-helix.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-helix {{ ansible_distribution_release }} main'
+        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-{{ ansible_distribution_release }}-ppa-helix {{ ansible_distribution_release }} main'
         create: true
       when: ansible_distribution == "Ubuntu" and nexus
 
