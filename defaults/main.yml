@@ -13,4 +13,4 @@ pipy_proxy_proto: "{{ nexusProto }}"
 pipy_proxy_ip: "{{ nexusIP }}"
 mitogen_version: 0.3.4
 
-golang_version: "1.21"
+golang_version: "1.24"
