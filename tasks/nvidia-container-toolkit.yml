@@ -71,7 +71,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/nvidia-container-toolkit.list
         search_string: 'deb'
-        line: 'deb http://{{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-libnvidia-container /'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-libnvidia-container /'
         create: true
       when: nexus
 
