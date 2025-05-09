@@ -23,17 +23,17 @@
 
     - name: ppa-golang - create ppa repository definition
       ansible.builtin.lineinfile:
-        path: /etc/save/apt/sources.list.d/ubuntu-jammy-ppa-golang-backports.list
+        path: /etc/save/apt/sources.list.d/ubuntu-{{ ansible_lsb.codename }}-ppa-golang-backports.list
         search_string: 'deb'
-        line: 'deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu jammy main'
+        line: 'deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu {{ ansible_lsb.codename }} main'
         create: true
       when: not nexus
 
     - name: ppa-golang - create ppa repository definition
       ansible.builtin.lineinfile:
-        path: /etc/save/apt/sources.list.d/ubuntu-jammy-ppa-golang-backports.list
+        path: /etc/save/apt/sources.list.d/ubuntu-{{ ansible_lsb.codename }}-ppa-golang-backports.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-golang-backports jammy main'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-{{ ansible_lsb.codename }}-ppa-golang-backports {{ ansible_lsb.codename }} main'
         create: true
       when: nexus
 

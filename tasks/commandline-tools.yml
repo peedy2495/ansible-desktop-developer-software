@@ -102,7 +102,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-helix.list
         search_string: 'deb'
-        line: 'deb http://ppa.launchpadcontent.net/maveonair/helix-editor/ubuntu {{ ansible_distribution_release }} main'
+        line: 'deb http://ppa.launchpadcontent.net/maveonair/helix-editor/ubuntu {{ ansible_lsb.codename }} main'
         create: true
       when: ansible_distribution == "Ubuntu" and not nexus
 
@@ -110,7 +110,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-helix.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-{{ ansible_distribution_release }}-ppa-helix {{ ansible_distribution_release }} main'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-{{ ansible_lsb.codename }}-ppa-helix {{ ansible_lsb.codename }} main'
         create: true
       when: ansible_distribution == "Ubuntu" and nexus
 

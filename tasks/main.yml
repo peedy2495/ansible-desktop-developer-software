@@ -22,9 +22,9 @@
     - misc-from-native
 
 - name: install ansible from ppa
-  ansible.builtin.import_tasks: ppa-ansible-6.yml
+  ansible.builtin.import_tasks: ppa-ansible.yml
   tags:
-    - ppa-ansible-6
+    - ppa-ansible
 
 - name: add pipy-proxy
   ansible.builtin.import_tasks: pipy-proxy.yml

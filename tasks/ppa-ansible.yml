@@ -1,8 +1,8 @@
-- name: install ansible 6 from ppa
+- name: install ansible from ppa
   block:
-    - name: ppa-ansible 6 - deploy gpg key
+    - name: ppa-ansible - deploy gpg key
       ansible.builtin.blockinfile:
-        path: /etc/apt/trusted.gpg.d/ppa-ansible-6.asc
+        path: /etc/apt/trusted.gpg.d/ppa-ansible.asc
         create: true
         block: |
           -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -37,23 +37,23 @@
           -----END PGP PUBLIC KEY BLOCK-----
         mode: 644
 
-    - name: ppa-ansible 6 - create repository definition
+    - name: ppa-ansible - create repository definition
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
         search_string: 'deb'
-        line: 'deb https://ppa.launchpadcontent.net/ansible/ansible/ubuntu jammy main'
+        line: 'deb https://ppa.launchpadcontent.net/ansible/ansible/ubuntu {{ ansible_lsb.codename }} main'
         create: true
       when: not nexus
 
-    - name: ppa-ansible 6 - create repository definition
+    - name: ppa-ansible - create repository definition
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-ppa-ansible-6 jammy main'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-jammy-ppa-ansible-{{ ansible_version }} {{ ansible_lsb.codename }} main'
         create: true
       when: nexus
 
-    - name: ppa-ansible 6 - install
+    - name: ppa-ansible - install
       ansible.builtin.apt:
         update_cache: true
         install_recommends: true
@@ -63,7 +63,7 @@
           - ansible-core
           - ansible-lint
 
-    - name: ppa-ansible 6 - cleanup
+    - name: ppa-ansible - cleanup
       ansible.builtin.apt:
         autoremove: true
         autoclean: true

@@ -1,16 +1,22 @@
 # use existing nexus chache
 nexus: yes
 
-github_proxy_port: "{{ nexusPort }}"
-github_proxy_proto: "{{ nexusProto }}"
-github_proxy_ip: "{{ nexusIP }}"
+github_proxy_port: "{{ nexus_port }}"
+github_proxy_proto: "{{ nexus_proto }}"
+github_proxy_ip: "{{ nexus_host }}"
 github_proxy_path: "/repository/raw-github"
 github_proxy_api_path: "/repository/raw-api.github"
 
+pipy_proxy_use: true
 pipy_proxy: pipy-proxy
-pipy_proxy_port: "{{ nexusPort }}"
-pipy_proxy_proto: "{{ nexusProto }}"
-pipy_proxy_ip: "{{ nexusIP }}"
+pipy_proxy_port: "{{ nexus_port }}"
+pipy_proxy_proto: "{{ nexus_proto }}"
+pipy_proxy_ip: "{{ nexus_host }}"
+
+# mitogen is deprecated and used for older distributions up to jammy
+mitogen: false
 mitogen_version: 0.3.4
+
+ansible_version: 12
 
 golang_version: "1.24"

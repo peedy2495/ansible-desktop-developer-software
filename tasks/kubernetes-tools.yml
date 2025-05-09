@@ -51,6 +51,8 @@
           -----END PGP PUBLIC KEY BLOCK-----
         mode: 644
 
+
+    #! Xenial is really old ... maybe use another source? 
     - name: kubernetes - create ppa repository definition
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/kubernetes.list
@@ -63,7 +65,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/kubernetes.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-kubernetes kubernetes-xenial main'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-kubernetes kubernetes-xenial main'
         create: true
       when: nexus
 

@@ -193,7 +193,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/docker-ce.list
         search_string: 'deb'
-        line: 'deb https://download.docker.com/linux/ubuntu jammy stable'
+        line: 'deb https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable'
         create: true
       when: not nexus
 
@@ -201,7 +201,7 @@
       ansible.builtin.lineinfile:
         path: /etc/save/apt/sources.list.d/docker-ce.list
         search_string: 'deb'
-        line: 'deb http://ubuntu-proxy:8081/repository/ubuntu-jammy-docker-ce jammy stable'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-{{ ansible_lsb.codename }}-docker-ce {{ ansible_lsb.codename }} stable'
         create: true
       when: nexus
 
