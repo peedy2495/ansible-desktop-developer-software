@@ -39,7 +39,7 @@
 
     - name: ppa-ansible - create repository definition
       ansible.builtin.lineinfile:
-        path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
+        path: /etc/save/apt/sources.list.d/ppa-ansible-{{ ansible_version }}.list
         search_string: 'deb'
         line: 'deb https://ppa.launchpadcontent.net/ansible/ansible/ubuntu {{ ansible_lsb.codename }} main'
         create: true
@@ -47,9 +47,9 @@
 
     - name: ppa-ansible - create repository definition
       ansible.builtin.lineinfile:
-        path: /etc/save/apt/sources.list.d/ppa-ansible-6.list
+        path: /etc/save/apt/sources.list.d/ppa-ansible-{{ ansible_version }}.list
         search_string: 'deb'
-        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-jammy-ppa-ansible-{{ ansible_version }} {{ ansible_lsb.codename }} main'
+        line: 'deb {{ nexus_proto }}://{{ nexus_host }}:{{ nexus_port }}/repository/ubuntu-{{ ansible_lsb.codename }}-ppa-ansible-{{ ansible_version }} {{ ansible_lsb.codename }} main'
         create: true
       when: nexus
 
