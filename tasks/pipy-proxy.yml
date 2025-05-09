@@ -3,7 +3,7 @@
     dest: /etc/hosts
     line: "{{ pipy_proxy_ip }} {{ pipy_proxy }}"
     state: present
-    when: pipy_proxy_use
+  when: pipy_proxy_use
 
 - name: pipy-proxy - write config
   ansible.builtin.template:
@@ -13,4 +13,4 @@
     group: root
     mode: 0644
     force: yes
-    when: pipy_proxy_use
+  when: pipy_proxy_use
