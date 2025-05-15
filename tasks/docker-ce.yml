@@ -138,3 +138,4 @@
         name: docker.service
         state: started
       when: not docker_home.stat.exists
+      ignore_errors: yes
